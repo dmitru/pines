@@ -21,6 +21,7 @@ class DecisionTreeSplit(object):
         self.feature_id = feature_id
         self.treshold = treshold
 
+
 class DecisionTree(object):
     """
     Implements a binary decision tree with array-based representation.

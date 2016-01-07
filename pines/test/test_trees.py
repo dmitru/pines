@@ -14,14 +14,14 @@ class TestDecisionTree(unittest.TestCase):
 
     def test_one_split(self):
         tree = DecisionTree(features_count=1)
-        split = DecisionTreeSplit(0, 0.0)
+        split = DecisionTreeSplit(feature_id=0, treshold=0.0)
         tree.split_node(0, split)
         self.assertEqual(tree.num_of_leaves(), 2)
         print(tree)
 
     def test_multiple_splits(self):
         tree = DecisionTree(features_count=1)
-        split = DecisionTreeSplit(0, 0.0)
+        split = DecisionTreeSplit(feature_id=0, treshold=0.0)
         for split_count in range(1, 10):
             tree.split_node(tree.leaves()[0], split)
             print(tree)
