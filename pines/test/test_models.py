@@ -59,7 +59,7 @@ class TestDecisionTreeRegressor(unittest.TestCase):
 
     def test_boston(self):
         from sklearn.tree import DecisionTreeRegressor as DecisionTreeRegressorSklearn
-        model = DecisionTreeRegressor()
+        model = DecisionTreeRegressor(max_n_splits=3)
         model_sklearn = DecisionTreeRegressorSklearn()
 
         dataset = load_boston()
@@ -92,7 +92,7 @@ class TestObliviousDecisionTreeRegressor(unittest.TestCase):
 
     def test_boston(self):
         from sklearn.tree import DecisionTreeRegressor as DecisionTreeRegressorSklearn
-        model = DecisionTreeRegressor(tree_type='oblivious')
+        model = DecisionTreeRegressor(tree_type='oblivious', max_n_splits=3)
         model_sklearn = DecisionTreeRegressorSklearn()
 
         dataset = load_boston()
