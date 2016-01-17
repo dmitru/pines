@@ -9,10 +9,10 @@ from pines.tree_builders import TreeBuilderCART
 
 
 class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, criterion='gini'):
-        self._tree = None
+    def __init__(self, **kwargs):
+        self.tree_ = None
         # TODO: validate parameters
-        self.criterion = criterion
+        self.tree_builder_kwargs = kwargs
 
     def fit(self, X, y):
         """
@@ -25,10 +25,8 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
         data_size, n_features = X.shape
         self._n_features = n_features
 
-        self._tree_builder = TreeBuilderCART(
-                mode='classifier',
-                criterion=self.criterion)
-        self._tree = self._tree_builder.build_tree(X, y)
+        self._tree_builder = TreeBuilderCART(mode='classifier', **self.tree_builder_kwargs)
+        self.tree_ = self._tree_builder.build_tree(X, y)
         return self
 
     def predict(self, X):
@@ -38,11 +36,11 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
         :return:
         """
         X = self._validate_X_predict(X, check_input=True)
-        return self._tree.predict(X)
+        return self.tree_.predict(X)
 
     def _validate_X_predict(self, X, check_input):
         """Validate X whenever one tries to predict, apply, predict_proba"""
-        if self._tree is None:
+        if self.tree_ is None:
             raise NotFittedError("Estimator not fitted, "
                                  "call `fit` before exploiting the model.")
 
@@ -60,9 +58,9 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
 
 
 class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
-    def __init__(self, criterion='mse'):
+    def __init__(self, **kwargs):
         self._tree = None
-        self.criterion = criterion
+        self.tree_builder_kwargs = kwargs
 
     def fit(self, X, y):
         """
@@ -75,9 +73,7 @@ class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
         data_size, n_features = X.shape
         self._n_features = n_features
 
-        self._tree_builder = TreeBuilderCART(
-                mode='regressor',
-                criterion=self.criterion)
+        self._tree_builder = TreeBuilderCART(mode='regressor', **self.tree_builder_kwargs)
         self._tree = self._tree_builder.build_tree(X, y)
         return self
 

@@ -5,9 +5,8 @@ import scipy.stats
 import logging
 
 from pines import metrics
+from pines.metrics import list_to_discrete_rv
 from pines.trees import BinaryDecisionTree, BinaryDecisionTreeSplit
-
-logging.basicConfig()
 
 class TreeSplitCART(BinaryDecisionTreeSplit):
     def __init__(self, feature_id, value, impurity):
@@ -36,8 +35,11 @@ class TreeBuilderCART(object):
         - Sources of sklearn
     """
     logger = logging.getLogger("TreeBuilderCART")
+    debug = False
 
-    def __init__(self, mode, max_depth=10, min_samples_per_leaf=5, criterion='gini'):
+    def __init__(self, mode, max_depth=10, min_samples_per_leaf=5,
+                 leaf_prediction_rule='majority',
+                 criterion='auto'):
         """
 
         :param max_depth:
@@ -48,11 +50,16 @@ class TreeBuilderCART(object):
         the further splitting stops
         """
         assert mode in ['classifier', 'regressor']
-
         self.is_regression = mode == 'regressor'
         self.max_depth = max_depth
         self.min_samples_per_leaf = min_samples_per_leaf
+        if criterion == 'auto':
+            if mode == 'classifier':
+                criterion = 'gini'
+            else:
+                criterion = 'mse'
         self.split_criterion = resolve_split_criterion(criterion)
+        self.leaf_prediction_rule = leaf_prediction_rule
 
     def build_tree(self, X, y):
         """
@@ -75,7 +82,15 @@ class TreeBuilderCART(object):
         if self.is_regression:
             tree._leaf_values[cur_node] = np.mean(y)
         else:
-            tree._leaf_values[cur_node] = scipy.stats.mode(y).mode[0]
+            if self.leaf_prediction_rule == 'majority':
+                tree._leaf_values[cur_node] = scipy.stats.mode(y).mode[0]
+            elif self.leaf_prediction_rule == 'distribution':
+                values, probabilities = list_to_discrete_rv(y)
+                distribution = scipy.stats.rv_discrete(values=(values, probabilities))
+                func = lambda d: d.rvs()
+                tree._leaf_functions[cur_node] = (func, distribution)
+            else:
+                raise ValueError('Invalid value for leaf_prediction_rule: {}'.format(self.leaf_prediction_rule))
 
         leaf_reached = False
         if n_samples <= self.min_samples_per_leaf:
@@ -87,11 +102,11 @@ class TreeBuilderCART(object):
         if leaf_reached:
             return
 
+        if TreeBuilderCART.debug:
+            TreeBuilderCART.logger.debug('Split at {}, n = {}'.format(cur_node, n_samples))
         best_split = self.find_best_split(X, y)
         if best_split is None:
             return
-
-        TreeBuilderCART.logger.debug('Split at {}, n = {}'.format(cur_node, n_samples))
 
         tree.split_node(cur_node, best_split)
 
@@ -110,13 +125,20 @@ class TreeBuilderCART(object):
         splits = []
         x = X[:, feature_id]
         sorted_xy = sorted(zip(x, y))
-        for i in range(1, len(sorted_xy)):
-            if sorted_xy[i-1][1] != sorted_xy[i][1]:
-                split_value = (sorted_xy[i - 1][0] + sorted_xy[i][0]) / 2.0
-                _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
-                impurity = self.compute_split_impurity(y, y_left, y_right)
-                split = TreeSplitCART(feature_id, value=split_value, impurity=impurity)
-                splits.append(split)
+        if self.is_regression:
+            split_value = np.random.uniform(sorted_xy[0][0], sorted_xy[-1][0])
+            _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
+            impurity = self.compute_split_impurity(y, y_left, y_right)
+            split = TreeSplitCART(feature_id, value=split_value, impurity=impurity)
+            splits.append(split)
+        else:
+            for i in range(1, len(sorted_xy)):
+                if sorted_xy[i-1][1] != sorted_xy[i][1]:
+                    split_value = (sorted_xy[i - 1][0] + sorted_xy[i][0]) / 2.0
+                    _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
+                    impurity = self.compute_split_impurity(y, y_left, y_right)
+                    split = TreeSplitCART(feature_id, value=split_value, impurity=impurity)
+                    splits.append(split)
         return splits
 
     def find_best_split(self, X, y):

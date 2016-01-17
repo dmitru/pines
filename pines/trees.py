@@ -39,6 +39,7 @@ class BinaryDecisionTree(object):
         self._n_features = n_features
         self._is_leaf = np.zeros(0, dtype='bool')
         self._leaf_values = np.zeros(0)
+        self._leaf_functions = []
         self._leaf_n_samples = np.zeros(0)
         self._splits = []
 
@@ -50,8 +51,9 @@ class BinaryDecisionTree(object):
         if self._capacity <= required_capacity:
             self._is_leaf.resize(required_capacity)
             self._leaf_values.resize(required_capacity)
+            self._leaf_functions = self._grow_list(self._leaf_functions, required_capacity)
             self._leaf_n_samples.resize(required_capacity)
-            self._splits = self._splits + [None for _ in range(required_capacity - len(self._splits))]
+            self._splits = self._grow_list(self._splits, required_capacity)
             self._capacity = required_capacity
 
     def _init_root(self):
@@ -60,6 +62,9 @@ class BinaryDecisionTree(object):
 
     def num_of_leaves(self):
         return np.sum(self._is_leaf[:self._latest_used_node_id + 1])
+
+    def num_of_nodes(self):
+        return self._latest_used_node_id
 
     def is_leaf(self, node_id):
         assert node_id >= 0 and node_id <= self._latest_used_node_id
@@ -138,6 +143,9 @@ class BinaryDecisionTree(object):
                     current_leaf = self.left_child(current_leaf)
                 else:
                     current_leaf = self.right_child(current_leaf)
+            if self._leaf_functions[current_leaf] is not None:
+                func, args = self._leaf_functions[current_leaf]
+                return func(args)
             return self._leaf_values[current_leaf]
 
         sample_size, features_count = X.shape
@@ -157,3 +165,17 @@ class BinaryDecisionTree(object):
     def depth(self, node_id):
         assert node_id >= 0 and node_id <= self._latest_used_node_id
         return np.floor(np.log2(node_id + 1)) + 1
+
+    def _grow_list(self, list, required_capacity, fill_value=None):
+        """
+        Returns a list that is at least as long as required_capacity, filling the missing elements with
+        fill_value if needed.
+        If the length of the list is already greater than required_capacity, returns unmodified list.
+        :param list:
+        :param required_capacity:
+        :param fill_value:
+        :return:
+        """
+        if len(list) >= required_capacity:
+            return list
+        return list + [fill_value for _ in range(required_capacity - len(list))]

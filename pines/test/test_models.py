@@ -58,7 +58,7 @@ class TestDecisionTreeRegressor(unittest.TestCase):
         mean_mse = np.mean(mse)
         mean_mse_sklearn = np.mean(mse_sklearn)
         print(mean_mse, mean_mse_sklearn)
-        # Check that our model differs in MSE no worse than 20% from the sklearn version
+        # Check that our model differs in MSE no worse than 20%
         self.assertTrue(np.abs(mean_mse - mean_mse_sklearn) / mean_mse_sklearn < 0.2)
 
 
