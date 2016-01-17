@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="85bbb90d-e39f-4308-9281-0297a6d9c76c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pines/estimators.py" afterPath="$PROJECT_DIR$/pines/estimators.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pines/test/test_models.py" afterPath="$PROJECT_DIR$/pines/test/test_models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pines/test/test_trees.py" afterPath="$PROJECT_DIR$/pines/test/test_trees.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pines/test/test_metrics.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pines/metrics.py" afterPath="$PROJECT_DIR$/pines/metrics.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pines/tree_builders.py" afterPath="$PROJECT_DIR$/pines/tree_builders.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pines/trees.py" afterPath="$PROJECT_DIR$/pines/trees.py" />
     </list>
     <ignored path="pines.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,7 +21,9 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/pines$test_models.coverage" NAME="test_models Coverage Results" MODIFIED="1453040362360" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/pines$Nosetests_in_test_models.coverage" NAME="Nosetests in test_models Coverage Results" MODIFIED="1453051766983" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pines/test" />
-    <SUITE FILE_PATH="coverage/pines$Nosetests_in_TestDecisionTreeClassifier.coverage" NAME="Nosetests in TestDecisionTreeClassifier Coverage Results" MODIFIED="1453051743371" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pines/test" />
+    <SUITE FILE_PATH="coverage/pines$Nosetests_in_TestObliviousDecisionTreeClassifier.coverage" NAME="Nosetests in TestObliviousDecisionTreeClassifier Coverage Results" MODIFIED="1453060913487" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pines/test" />
+    <SUITE FILE_PATH="coverage/pines$Nosetests_in_test_metrics.coverage" NAME="Nosetests in test_metrics Coverage Results" MODIFIED="1453060888481" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pines/test" />
+    <SUITE FILE_PATH="coverage/pines$Nosetests_in_TestDecisionTreeClassifier.coverage" NAME="Nosetests in TestDecisionTreeClassifier Coverage Results" MODIFIED="1453060896323" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pines/test" />
     <SUITE FILE_PATH="coverage/pines$Nosetests_in_test_trees.coverage" NAME="Nosetests in test_trees Coverage Results" MODIFIED="1453042508249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/pines/test" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -41,17 +39,17 @@
         <entry file="file://$PROJECT_DIR$/pines/estimators.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="89" column="8" selection-start-line="89" selection-start-column="8" selection-end-line="89" selection-end-column="19" />
+              <caret line="66" column="8" selection-start-line="66" selection-start-column="8" selection-end-line="66" selection-end-column="8" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tree_builders.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="tree_builders.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pines/tree_builders.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="77" column="19" selection-start-line="77" selection-start-column="19" selection-end-line="77" selection-end-column="19" />
+            <state vertical-scroll-proportion="0.3326226">
+              <caret line="191" column="31" selection-start-line="191" selection-start-column="31" selection-end-line="191" selection-end-column="31" />
               <folding>
                 <element signature="e#16#34#0" expanded="true" />
               </folding>
@@ -59,14 +57,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider editor-type-id="MultiMarkdownFxPreviewEditor">
             <state />
           </provider>
           <provider selected="true" editor-type-id="split-provider[text-editor;MultiMarkdownPreviewEditor]">
             <state split_layout="FIRST">
-              <first_editor vertical-scroll-proportion="0.8287293">
+              <first_editor vertical-scroll-proportion="0.7099447">
                 <caret line="20" column="39" selection-start-line="20" selection-start-column="39" selection-end-line="20" selection-end-column="39" />
                 <folding />
               </first_editor>
@@ -75,25 +73,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trees.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pines/trees.py">
+      <file leaf-file-name="test_trees.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pines/test/test_trees.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="160" column="8" selection-start-line="160" selection-start-column="8" selection-end-line="160" selection-end-column="8" />
+              <caret line="64" column="30" selection-start-line="0" selection-start-column="0" selection-end-line="70" selection-end-column="19" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test_trees.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pines/test/test_trees.py">
+      <file leaf-file-name="test_metrics.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pines/test/test_metrics.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
+              <caret line="20" column="62" selection-start-line="20" selection-start-column="62" selection-end-line="20" selection-end-column="62" />
               <folding>
-                <marker date="1453042222000" expanded="true" signature="129:2261" placeholder="..." />
-                <marker date="1453042222000" expanded="true" signature="603:898" placeholder="..." />
-                <marker date="1453042222000" expanded="true" signature="1839:2261" placeholder="..." />
+                <element signature="e#1#16#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -103,7 +99,27 @@
         <entry file="file://$PROJECT_DIR$/pines/metrics.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
+              <caret line="31" column="18" selection-start-line="31" selection-start-column="18" selection-end-line="31" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pydev_import_hook.py" pinned="false" current-in-tab="false">
+        <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydev_import_hook.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="arraysetops.py" pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.virtualenvs/ml/lib/python3.4/site-packages/numpy/lib/arraysetops.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="95" column="4" selection-start-line="95" selection-start-column="4" selection-end-line="95" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -113,7 +129,7 @@
         <entry file="file://$PROJECT_DIR$/pines/test/test_models.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="61" column="37" selection-start-line="61" selection-start-column="16" selection-end-line="61" selection-end-column="37" />
+              <caret line="117" column="85" selection-start-line="93" selection-start-column="8" selection-end-line="117" selection-end-column="85" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
               </folding>
@@ -121,7 +137,26 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="scratchpad.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scratchpad.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+              <folding>
+                <element signature="e#0#70#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -130,13 +165,16 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/../ml-resources/README.md" />
-        <option value="$PROJECT_DIR$/pines/metrics.py" />
         <option value="$PROJECT_DIR$/pines/test/test_trees.py" />
         <option value="$PROJECT_DIR$/pines/trees.py" />
-        <option value="$PROJECT_DIR$/pines/test/test_models.py" />
         <option value="$PROJECT_DIR$/pines/estimators.py" />
-        <option value="$PROJECT_DIR$/pines/tree_builders.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/pines/scratchpad.py" />
+        <option value="$PROJECT_DIR$/pines/test/test_metrics.py" />
+        <option value="$PROJECT_DIR$/pines/test/test_models.py" />
+        <option value="$PROJECT_DIR$/pines/metrics.py" />
+        <option value="$PROJECT_DIR$/scratchpad.py" />
+        <option value="$PROJECT_DIR$/pines/tree_builders.py" />
       </list>
     </option>
   </component>
@@ -149,6 +187,22 @@
     <option name="y" value="23" />
     <option name="width" value="1438" />
     <option name="height" value="873" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Buildout</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -183,16 +237,6 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="pines" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="pines" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ml-resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -245,8 +289,33 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/pines/test/test_models.py" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
-  <component name="RunManager" selected="Python tests.Nosetests in test_models">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python tests.Nosetests in TestObliviousDecisionTreeClassifier">
+    <configuration default="false" name="scratchpad" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="pines" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scratchpad.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
     <configuration default="false" name="Nosetests in test_models" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -267,6 +336,28 @@
       <option name="USE_PATTERN" value="false" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Nosetests in test_metrics" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/pines/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="pines" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pines/test/test_metrics.py" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PARAMS" value="--nocapture" />
+      <option name="USE_PARAM" value="true" />
       <method />
     </configuration>
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
@@ -572,17 +663,21 @@
       <option name="USE_PARAM" value="true" />
       <method />
     </configuration>
-    <list size="6">
-      <item index="0" class="java.lang.String" itemvalue="Python tests.Nosetests in test_trees" />
-      <item index="1" class="java.lang.String" itemvalue="Python tests.Nosetests in TestObliviousDecisionTreeRegressor" />
-      <item index="2" class="java.lang.String" itemvalue="Python tests.Nosetests in TestObliviousDecisionTreeClassifier" />
-      <item index="3" class="java.lang.String" itemvalue="Python tests.Nosetests in TestDecisionTreeClassifier" />
-      <item index="4" class="java.lang.String" itemvalue="Python tests.Nosetests in TestDecisionTreeRegressor" />
-      <item index="5" class="java.lang.String" itemvalue="Python tests.Nosetests in test_models" />
+    <list size="8">
+      <item index="0" class="java.lang.String" itemvalue="Python.scratchpad" />
+      <item index="1" class="java.lang.String" itemvalue="Python tests.Nosetests in test_trees" />
+      <item index="2" class="java.lang.String" itemvalue="Python tests.Nosetests in TestObliviousDecisionTreeRegressor" />
+      <item index="3" class="java.lang.String" itemvalue="Python tests.Nosetests in TestObliviousDecisionTreeClassifier" />
+      <item index="4" class="java.lang.String" itemvalue="Python tests.Nosetests in TestDecisionTreeClassifier" />
+      <item index="5" class="java.lang.String" itemvalue="Python tests.Nosetests in TestDecisionTreeRegressor" />
+      <item index="6" class="java.lang.String" itemvalue="Python tests.Nosetests in test_models" />
+      <item index="7" class="java.lang.String" itemvalue="Python tests.Nosetests in test_metrics" />
     </list>
     <recent_temporary>
-      <list size="1">
-        <item index="0" class="java.lang.String" itemvalue="Python tests.Nosetests in test_models" />
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="Python tests.Nosetests in test_metrics" />
+        <item index="1" class="java.lang.String" itemvalue="Python.scratchpad" />
+        <item index="2" class="java.lang.String" itemvalue="Python tests.Nosetests in test_models" />
       </list>
     </recent_temporary>
   </component>
@@ -613,54 +708,54 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Nosetests_in_TestDecisionTreeClassifier - 2016.01.17 at 20h 24m 06s.xml">
+    <history-entry file="Nosetests_in_TestDecisionTreeClassifier - 2016.01.17 at 23h 01m 41s.xml">
       <configuration name="Nosetests in TestDecisionTreeClassifier" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_in_TestDecisionTreeClassifier - 2016.01.17 at 20h 28m 44s.xml">
-      <configuration name="Nosetests in TestDecisionTreeClassifier" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Nosetests_in_TestDecisionTreeClassifier - 2016.01.17 at 20h 29m 09s.xml">
-      <configuration name="Nosetests in TestDecisionTreeClassifier" configurationId="tests" />
-    </history-entry>
-    <history-entry file="Nosetests_in_TestObliviousDecisionTreeClassifier - 2016.01.17 at 20h 24m 24s.xml">
+    <history-entry file="Nosetests_in_TestObliviousDecisionTreeClassifier - 2016.01.17 at 23h 01m 57s.xml">
       <configuration name="Nosetests in TestObliviousDecisionTreeClassifier" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_in_TestObliviousDecisionTreeClassifier - 2016.01.17 at 20h 26m 26s.xml">
-      <configuration name="Nosetests in TestObliviousDecisionTreeClassifier" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 22h 59m 36s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_in_TestObliviousDecisionTreeClassifier - 2016.01.17 at 20h 26m 55s.xml">
-      <configuration name="Nosetests in TestObliviousDecisionTreeClassifier" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 22h 59m 56s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_in_TestObliviousDecisionTreeClassifier - 2016.01.17 at 20h 27m 15s.xml">
-      <configuration name="Nosetests in TestObliviousDecisionTreeClassifier" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 23h 00m 06s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_in_TestObliviousDecisionTreeRegressor - 2016.01.17 at 20h 27m 41s.xml">
-      <configuration name="Nosetests in TestObliviousDecisionTreeRegressor" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 23h 00m 44s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_in_TestObliviousDecisionTreeRegressor - 2016.01.17 at 20h 28m 06s.xml">
-      <configuration name="Nosetests in TestObliviousDecisionTreeRegressor" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 23h 00m 50s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
     </history-entry>
-    <history-entry file="Nosetests_in_test_models - 2016.01.17 at 20h 30m 15s.xml">
-      <configuration name="Nosetests in test_models" configurationId="tests" />
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 23h 01m 13s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 23h 01m 19s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Nosetests_in_test_metrics - 2016.01.17 at 23h 01m 29s.xml">
+      <configuration name="Nosetests in test_metrics" configurationId="tests" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1438" height="873" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290653" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3290653" sideWeight="0.5114613" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290653" sideWeight="0.491404" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.43021768" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290653" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43021768" sideWeight="0.5716332" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3290653" sideWeight="0.48853868" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25716332" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290653" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290653" sideWeight="0.49713466" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39948782" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39948782" sideWeight="0.49713466" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -734,59 +829,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pines/metrics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pines/test/test_trees.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="64" column="30" selection-start-line="64" selection-start-column="30" selection-end-line="64" selection-end-column="30" />
-          <folding>
-            <marker date="1453042222000" expanded="true" signature="129:2261" placeholder="..." />
-            <marker date="1453042222000" expanded="true" signature="603:898" placeholder="..." />
-            <marker date="1453042222000" expanded="true" signature="1839:2261" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pines/trees.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="160" column="8" selection-start-line="160" selection-start-column="8" selection-end-line="160" selection-end-column="8" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pines/test/test_models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="61" column="37" selection-start-line="61" selection-start-column="16" selection-end-line="61" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pines/estimators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="89" column="8" selection-start-line="89" selection-start-column="8" selection-end-line="89" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pines/tree_builders.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="77" column="19" selection-start-line="77" selection-start-column="19" selection-end-line="77" selection-end-column="19" />
-          <folding>
-            <element signature="e#16#34#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -796,11 +843,99 @@
       </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MultiMarkdownPreviewEditor]">
         <state split_layout="FIRST">
-          <first_editor vertical-scroll-proportion="0.8287293">
+          <first_editor vertical-scroll-proportion="0.7099447">
             <caret line="20" column="39" selection-start-line="20" selection-start-column="39" selection-end-line="20" selection-end-column="39" />
             <folding />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scratchpad.profile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17985612">
+          <caret line="5" column="90" selection-start-line="5" selection-start-column="90" selection-end-line="5" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.virtualenvs/ml/lib/python3.4/site-packages/numpy/lib/arraysetops.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="95" column="4" selection-start-line="95" selection-start-column="4" selection-end-line="95" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydev_import_hook.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pines/test/test_trees.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="64" column="30" selection-start-line="0" selection-start-column="0" selection-end-line="70" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pines/test/test_models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="117" column="85" selection-start-line="93" selection-start-column="8" selection-end-line="117" selection-end-column="85" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pines/metrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="18" selection-start-line="31" selection-start-column="18" selection-end-line="31" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pines/test/test_metrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="20" column="62" selection-start-line="20" selection-start-column="62" selection-end-line="20" selection-end-column="62" />
+          <folding>
+            <element signature="e#1#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scratchpad.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="15" column="29" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#70#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pines/estimators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="66" column="8" selection-start-line="66" selection-start-column="8" selection-end-line="66" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pines/tree_builders.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3326226">
+          <caret line="191" column="31" selection-start-line="191" selection-start-column="31" selection-end-line="191" selection-end-column="31" />
+          <folding>
+            <element signature="e#16#34#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

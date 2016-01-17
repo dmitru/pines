@@ -38,7 +38,7 @@ class TreeBuilderCART(object):
     debug = False
 
     def __init__(self, mode, max_depth=10, min_samples_per_leaf=5,
-                 max_n_splits=5,
+                 max_n_splits=1,
                  leaf_prediction_rule='majority',
                  criterion='auto'):
         """
@@ -127,14 +127,15 @@ class TreeBuilderCART(object):
     def _feature_splits(self, X, y, feature_id):
         splits = []
         x = X[:, feature_id]
-        sorted_xy = sorted(zip(x, y))
         split_values = []
         if self.is_regression:
+            min_x, max_x = np.min(x), np.max(x)
             for _ in range(self.max_n_splits):
                 for i in range(self.max_n_splits):
-                    split_value = np.random.uniform(sorted_xy[0][0], sorted_xy[-1][0])
+                    split_value = np.random.uniform(min_x, max_x)
                     split_values.append(split_value)
         else:
+            sorted_xy = sorted(zip(x, y))
             for i in range(1, len(sorted_xy)):
                 if sorted_xy[i-1][1] != sorted_xy[i][1]:
                     split_value = (sorted_xy[i - 1][0] + sorted_xy[i][0]) / 2.0
@@ -188,7 +189,7 @@ class TreeBuilderOblivious(object):
     debug = False
 
     def __init__(self, mode, max_depth=10, min_samples_per_leaf=4,
-                 max_n_splits=5,
+                 max_n_splits=1,
                  leaf_prediction_rule='majority',
                  criterion='auto'):
         """
@@ -288,14 +289,15 @@ class TreeBuilderOblivious(object):
             assert node in self._data_per_node
             X, y = self._data_per_node[node]
             x = X[:, feature_id]
-            sorted_xy = sorted(zip(x, y))
             split_values = []
             if self.is_regression:
+                min_x, max_x = np.min(x), np.max(x)
                 for _ in range(self.max_n_splits):
                     for i in range(self.max_n_splits):
-                        split_value = np.random.uniform(sorted_xy[0][0], sorted_xy[-1][0])
+                        split_value = np.random.uniform(min_x, max_x)
                         split_values.append(split_value)
             else:
+                sorted_xy = sorted(zip(x, y))
                 for i in range(1, len(sorted_xy)):
                     if sorted_xy[i-1][1] != sorted_xy[i][1]:
                         split_value = (sorted_xy[i - 1][0] + sorted_xy[i][0]) / 2.0
