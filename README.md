@@ -1,5 +1,10 @@
 # decision-trees
-A Python library that implements sklearn-compatible decision trees (using CART algorithm).
+A Python library that implements sklearn-compatible decision trees.
+
+## List of things implemented
+- CART algorithm for building regression and classification trees
+- Oblivious Trees 
+- Different splitting criteria: Gini index, entropy
 
 ## Rationale
 
@@ -13,4 +18,4 @@ With the trees from sklearn one would have to code it in Cython, which is nasty.
 
 - Implement tree pruning
 - Add more parameters to tweak, make the interface more like `sklearn.tree.DecisionTree*` classes
-- Speed things up?
+- Speed things up, maybe switch to Cython? 

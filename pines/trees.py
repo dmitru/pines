@@ -4,20 +4,7 @@ import numpy as np
 from copy import deepcopy
 
 class BinaryDecisionTreeSplit(object):
-    """
-    DecisionTreeSplit describes a split to perform on a DecisionTree.
-
-    Typical use of this class is for a TreeGrower to decide which split to make,
-    create a DecisionTreeSplit and pass it to the DecisionTree, so that the latter
-    can update its internal structures.
-    """
     def __init__(self, feature_id, value):
-        """
-
-        :param feature_id: int, id of the feature on which the split is made
-        :param value: number, threshold for the split
-        :return:
-        """
         self.feature_id = feature_id
         self.value = value
 
@@ -38,6 +25,7 @@ class BinaryDecisionTree(object):
 
         self._n_features = n_features
         self._is_leaf = np.zeros(0, dtype='bool')
+        self._is_node = np.zeros(0, dtype='bool')
         self._leaf_values = np.zeros(0)
         self._leaf_functions = []
         self._leaf_n_samples = np.zeros(0)
@@ -50,6 +38,7 @@ class BinaryDecisionTree(object):
     def _reallocate_if_needed(self, required_capacity):
         if self._capacity <= required_capacity:
             self._is_leaf.resize(required_capacity)
+            self._is_node.resize(required_capacity)
             self._leaf_values.resize(required_capacity)
             self._leaf_functions = self._grow_list(self._leaf_functions, required_capacity)
             self._leaf_n_samples.resize(required_capacity)
@@ -58,6 +47,7 @@ class BinaryDecisionTree(object):
 
     def _init_root(self):
         self._is_leaf[0] = True
+        self._is_node[0] = True
         self._latest_used_node_id = 0
 
     def num_of_leaves(self):
@@ -125,6 +115,8 @@ class BinaryDecisionTree(object):
 
         self._splits[node_id] = deepcopy(split)
         self._is_leaf[node_id] = False
+        self._is_node[left_child_id] = True
+        self._is_node[right_child_id] = True
         self._is_leaf[left_child_id] = True
         self._is_leaf[right_child_id] = True
         self._latest_used_node_id = max(self._latest_used_node_id, right_child_id)
@@ -165,6 +157,20 @@ class BinaryDecisionTree(object):
     def depth(self, node_id):
         assert node_id >= 0 and node_id <= self._latest_used_node_id
         return np.floor(np.log2(node_id + 1)) + 1
+
+    def nodes_at_level(self, level):
+        """
+        Args:
+            level: Depth level in the tree, starting from 1 for the root node.
+
+        Returns:
+            List of node ids at the specified level.
+        """
+        result = []
+        for node_id in range(2 ** (level - 1) - 1, min(2 ** level - 1, self._latest_used_node_id + 1)):
+            if self._is_node[node_id]:
+                result.append(node_id)
+        return result
 
     def _grow_list(self, list, required_capacity, fill_value=None):
         """

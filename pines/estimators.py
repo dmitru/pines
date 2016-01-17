@@ -5,14 +5,15 @@ from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from sklearn.utils import check_X_y, check_array
 from sklearn.utils.validation import NotFittedError
 
-from pines.tree_builders import TreeBuilderCART
+from pines.tree_builders import TreeBuilderCART, TreeBuilderOblivious
 
 
 class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, **kwargs):
+    def __init__(self, tree_type='cart', **kwargs):
         self.tree_ = None
         # TODO: validate parameters
         self.tree_builder_kwargs = kwargs
+        self.tree_type = tree_type
 
     def fit(self, X, y):
         """
@@ -25,7 +26,12 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
         data_size, n_features = X.shape
         self._n_features = n_features
 
-        self._tree_builder = TreeBuilderCART(mode='classifier', **self.tree_builder_kwargs)
+        if self.tree_type == 'cart':
+            self._tree_builder = TreeBuilderCART(mode='classifier', **self.tree_builder_kwargs)
+        elif self.tree_type == 'oblivious':
+            self._tree_builder = TreeBuilderOblivious(mode='classifier', **self.tree_builder_kwargs)
+        else:
+            raise ValueError('Unknown tree_type: {}'.format(self.tree_type))
         self.tree_ = self._tree_builder.build_tree(X, y)
         return self
 
@@ -58,9 +64,10 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
 
 
 class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
-    def __init__(self, **kwargs):
+    def __init__(self, tree_type='cart', **kwargs):
         self._tree = None
         self.tree_builder_kwargs = kwargs
+        self.tree_type = tree_type
 
     def fit(self, X, y):
         """
@@ -73,7 +80,12 @@ class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
         data_size, n_features = X.shape
         self._n_features = n_features
 
-        self._tree_builder = TreeBuilderCART(mode='regressor', **self.tree_builder_kwargs)
+        if self.tree_type == 'cart':
+            self._tree_builder = TreeBuilderCART(mode='regressor', **self.tree_builder_kwargs)
+        elif self.tree_type == 'oblivious':
+            self._tree_builder = TreeBuilderOblivious(mode='regressor', **self.tree_builder_kwargs)
+        else:
+            raise ValueError('Unknown tree_type: {}'.format(self.tree_type))
         self._tree = self._tree_builder.build_tree(X, y)
         return self
 
