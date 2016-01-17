@@ -9,9 +9,9 @@ from pines.metrics import list_to_discrete_rv
 from pines.trees import BinaryDecisionTree, BinaryDecisionTreeSplit
 
 class TreeSplitCART(BinaryDecisionTreeSplit):
-    def __init__(self, feature_id, value, impurity):
+    def __init__(self, feature_id, value, gain):
         super(TreeSplitCART, self).__init__(feature_id, value)
-        self.impurity = impurity
+        self.gain = gain
 
 
 def resolve_split_criterion(criterion):
@@ -78,20 +78,6 @@ class TreeBuilderCART(object):
         if n_samples < 1:
             return
 
-        tree._leaf_n_samples[cur_node] = len(y)
-        if self.is_regression:
-            tree._leaf_values[cur_node] = np.mean(y)
-        else:
-            if self.leaf_prediction_rule == 'majority':
-                tree._leaf_values[cur_node] = scipy.stats.mode(y).mode[0]
-            elif self.leaf_prediction_rule == 'distribution':
-                values, probabilities = list_to_discrete_rv(y)
-                distribution = scipy.stats.rv_discrete(values=(values, probabilities))
-                func = lambda d: d.rvs()
-                tree._leaf_functions[cur_node] = (func, distribution)
-            else:
-                raise ValueError('Invalid value for leaf_prediction_rule: {}'.format(self.leaf_prediction_rule))
-
         leaf_reached = False
         if n_samples <= self.min_samples_per_leaf:
             leaf_reached = True
@@ -99,23 +85,36 @@ class TreeBuilderCART(object):
         if depth >= self.max_depth:
             leaf_reached = True
 
+        if not leaf_reached:
+            if TreeBuilderCART.debug:
+                TreeBuilderCART.logger.debug('Split at {}, n = {}'.format(cur_node, n_samples))
+            best_split = self.find_best_split(X, y)
+            if best_split is None:
+                leaf_reached = True
+
         if leaf_reached:
-            return
+            tree._leaf_n_samples[cur_node] = len(y)
+            if self.is_regression:
+                tree._leaf_values[cur_node] = np.mean(y)
+            else:
+                if self.leaf_prediction_rule == 'majority':
+                    tree._leaf_values[cur_node] = scipy.stats.mode(y).mode[0]
+                elif self.leaf_prediction_rule == 'distribution':
+                    values, probabilities = list_to_discrete_rv(y)
+                    distribution = scipy.stats.rv_discrete(values=(values, probabilities))
+                    func = lambda d: d.rvs()
+                    tree._leaf_functions[cur_node] = (func, distribution)
+                else:
+                    raise ValueError('Invalid value for leaf_prediction_rule: {}'.format(self.leaf_prediction_rule))
+        else:
+            tree.split_node(cur_node, best_split)
 
-        if TreeBuilderCART.debug:
-            TreeBuilderCART.logger.debug('Split at {}, n = {}'.format(cur_node, n_samples))
-        best_split = self.find_best_split(X, y)
-        if best_split is None:
-            return
-
-        tree.split_node(cur_node, best_split)
-
-        left_child = tree.left_child(cur_node)
-        right_child = tree.right_child(cur_node)
-        X_left, X_right, y_left, y_right = self.split_dataset(
-                X, y, best_split.feature_id, best_split.value)
-        self._build_tree_recursive(tree, left_child, X_left, y_left)
-        self._build_tree_recursive(tree, right_child, X_right, y_right)
+            left_child = tree.left_child(cur_node)
+            right_child = tree.right_child(cur_node)
+            X_left, X_right, y_left, y_right = self.split_dataset(
+                    X, y, best_split.feature_id, best_split.value)
+            self._build_tree_recursive(tree, left_child, X_left, y_left)
+            self._build_tree_recursive(tree, right_child, X_right, y_right)
 
     def _prune_tree(self, tree, X, y):
         # TODO: add tree pruning
@@ -126,19 +125,22 @@ class TreeBuilderCART(object):
         x = X[:, feature_id]
         sorted_xy = sorted(zip(x, y))
         if self.is_regression:
+            # TODO: consider more than one split point?
             split_value = np.random.uniform(sorted_xy[0][0], sorted_xy[-1][0])
             _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
-            impurity = self.compute_split_impurity(y, y_left, y_right)
-            split = TreeSplitCART(feature_id, value=split_value, impurity=impurity)
-            splits.append(split)
+            gain = self.compute_split_gain(y, y_left, y_right)
+            if gain > 0:
+                split = TreeSplitCART(feature_id, value=split_value, gain=gain)
+                splits.append(split)
         else:
             for i in range(1, len(sorted_xy)):
                 if sorted_xy[i-1][1] != sorted_xy[i][1]:
                     split_value = (sorted_xy[i - 1][0] + sorted_xy[i][0]) / 2.0
                     _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
-                    impurity = self.compute_split_impurity(y, y_left, y_right)
-                    split = TreeSplitCART(feature_id, value=split_value, impurity=impurity)
-                    splits.append(split)
+                    gain = self.compute_split_gain(y, y_left, y_right)
+                    if gain > 0:
+                        split = TreeSplitCART(feature_id, value=split_value, gain=gain)
+                        splits.append(split)
         return splits
 
     def find_best_split(self, X, y):
@@ -147,7 +149,7 @@ class TreeBuilderCART(object):
         for feature_id in range(n_features):
             splits = self._feature_splits(X, y, feature_id)
             for split in splits:
-                if best_split is None or split.impurity < best_split.impurity:
+                if best_split is None or split.gain > best_split.gain:
                     best_split = split
         return best_split
 
@@ -155,6 +157,7 @@ class TreeBuilderCART(object):
         mask = X[:, feature_id] <= value
         return X[mask], X[~mask], y[mask], y[~mask]
 
-    def compute_split_impurity(self, y, y_left, y_right):
+    def compute_split_gain(self, y, y_left, y_right):
         splits = [y_left, y_right]
-        return sum([self.split_criterion(split) * float(len(split))/len(y) for split in splits])
+        return self.split_criterion(y) - \
+               sum([self.split_criterion(split) * float(len(split))/len(y) for split in splits])
