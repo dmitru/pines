@@ -8,6 +8,8 @@ from pines import metrics
 from pines.metrics import list_to_discrete_rv
 from pines.trees import BinaryDecisionTree, BinaryDecisionTreeSplit
 
+from multiprocessing import Pool
+
 
 def resolve_split_criterion(criterion):
     if criterion == 'gini':
@@ -62,6 +64,7 @@ class TreeBuilderCART(object):
                 criterion = 'mse'
         self.split_criterion = resolve_split_criterion(criterion)
         self.leaf_prediction_rule = leaf_prediction_rule
+        self.pool = None
 
     def build_tree(self, X, y):
         """
@@ -69,12 +72,14 @@ class TreeBuilderCART(object):
         """
         n_samples, n_features = X.shape
         tree = BinaryDecisionTree(n_features=n_features)
+        self.pool = Pool(1)
 
         leaf_to_split = tree.root()
         self._build_tree_recursive(tree, leaf_to_split, X, y)
         self._prune_tree(tree, X, y)
         if TreeBuilderCART.debug:
             TreeBuilderCART.logger.debug(tree)
+        self.pool = None
         return tree
 
     def _build_tree_recursive(self, tree, cur_node, X, y):
@@ -92,6 +97,7 @@ class TreeBuilderCART(object):
         if not leaf_reached:
             if TreeBuilderCART.debug:
                 TreeBuilderCART.logger.debug('Split at {}, n = {}'.format(cur_node, n_samples))
+
             best_split = self.find_best_split(X, y)
             if best_split is None:
                 leaf_reached = True
@@ -115,7 +121,7 @@ class TreeBuilderCART(object):
 
             left_child = tree.left_child(cur_node)
             right_child = tree.right_child(cur_node)
-            X_left, X_right, y_left, y_right = self.split_dataset(
+            X_left, X_right, y_left, y_right = split_dataset(
                     X, y, best_split.feature_id, best_split.value)
             self._build_tree_recursive(tree, left_child, X_left, y_left)
             self._build_tree_recursive(tree, right_child, X_right, y_right)
@@ -124,8 +130,7 @@ class TreeBuilderCART(object):
         # TODO: add tree pruning
         pass
 
-    def _feature_splits(self, X, y, feature_id):
-        splits = []
+    def _compute_split_values(self, X, y, feature_id):
         x = X[:, feature_id]
         split_values = []
         if self.is_regression:
@@ -143,34 +148,45 @@ class TreeBuilderCART(object):
             if len(split_values) > self.max_n_splits:
                 np.random.shuffle(split_values)
                 split_values = split_values[:self.max_n_splits]
-        for split_value in split_values:
-            _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
-            if len(y_left) == 0 or len(y_right) == 0:
-                continue
-            gain = self.compute_split_gain(y, y_left, y_right)
-            if gain > 0:
-                split = TreeSplitCART(feature_id, value=split_value, gain=gain)
-                splits.append(split)
-        return splits
+        return split_values
 
     def find_best_split(self, X, y):
         n_samples, n_features = X.shape
-        best_split = None
+        args = []
         for feature_id in range(n_features):
-            splits = self._feature_splits(X, y, feature_id)
-            for split in splits:
-                if best_split is None or split.gain > best_split.gain:
+            for split_value in self._compute_split_values(X, y, feature_id):
+                args.append([self.split_criterion, X, y, feature_id, split_value])
+        split_gains = self.pool.map(compute_split_gain_helper, args)
+
+        splits = []
+        for arg, gain in zip(args, split_gains):
+            _, _, _, feature_id, split_value = arg
+            if gain is not None and gain > 0:
+                split = TreeSplitCART(feature_id, value=split_value, gain=gain)
+                splits.append(split)
+
+        best_split = None
+        for split in splits:
+            if best_split is None or split.gain > best_split.gain:
                     best_split = split
         return best_split
 
-    def split_dataset(self, X, y, feature_id, value):
-        mask = X[:, feature_id] <= value
-        return X[mask], X[~mask], y[mask], y[~mask]
+def compute_split_gain_helper(args):
+    split_criterion, X, y, feature_id, split_value = args
+    _, _, y_left, y_right = split_dataset(X, y, feature_id, split_value)
+    if len(y_left) == 0 or len(y_right) == 0:
+        return None
+    gain = compute_split_gain(split_criterion, y, y_left, y_right)
+    return gain
 
-    def compute_split_gain(self, y, y_left, y_right):
-        splits = [y_left, y_right]
-        return self.split_criterion(y) - \
-               sum([self.split_criterion(split) * float(len(split))/len(y) for split in splits])
+def split_dataset( X, y, feature_id, value):
+    mask = X[:, feature_id] <= value
+    return X[mask], X[~mask], y[mask], y[~mask]
+
+def compute_split_gain(split_criterion, y, y_left, y_right):
+    splits = [y_left, y_right]
+    return split_criterion(y) - \
+           sum([split_criterion(split) * float(len(split))/len(y) for split in splits])
 
 
 class TreeSplitOblivious(BinaryDecisionTreeSplit):
@@ -309,7 +325,7 @@ class TreeBuilderOblivious(object):
                 _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
                 if len(y_left) == 0 or len(y_right) == 0:
                     continue
-                gain = self.compute_split_gain(y, y_left, y_right)
+                gain = compute_split_gain(self.split_criterion, y, y_left, y_right)
                 if gain > 0:
                     split = TreeSplitOblivious(feature_id, value=split_value, gain=gain, node_id=node)
                     node_splits.append(split)
