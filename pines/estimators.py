@@ -15,7 +15,7 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
         self.tree_builder_kwargs = kwargs
         self.tree_type = tree_type
 
-    def fit(self, X, y):
+    def fit(self, X, y, **kwargs):
         """
 
         :param X:
@@ -35,13 +35,14 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
         self.tree_ = self._tree_builder.build_tree(X, y)
         return self
 
-    def predict(self, X):
+    def predict(self, X, check_input=True):
         """
 
         :param X:
         :return:
         """
-        X = self._validate_X_predict(X, check_input=True)
+        if check_input:
+            X = self._validate_X_predict(X, check_input=True)
         return self.tree_.predict(X)
 
     def _validate_X_predict(self, X, check_input):
@@ -69,7 +70,7 @@ class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
         self.tree_builder_kwargs = kwargs
         self.tree_type = tree_type
 
-    def fit(self, X, y):
+    def fit(self, X, y, **kwargs):
         """
 
         :param X:
@@ -89,13 +90,14 @@ class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
         self._tree = self._tree_builder.build_tree(X, y)
         return self
 
-    def predict(self, X):
+    def predict(self, X, check_input=True):
         """
 
         :param X:
         :return:
         """
-        X = self._validate_X_predict(X, check_input=True)
+        if check_input:
+            X = self._validate_X_predict(X, check_input=True)
         return self._tree.predict(X)
 
     def _validate_X_predict(self, X, check_input):

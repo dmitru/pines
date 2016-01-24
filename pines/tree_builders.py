@@ -40,7 +40,7 @@ class TreeBuilderCART(object):
     def __init__(self, mode, max_depth=10, min_samples_per_leaf=5,
                  max_n_splits=1,
                  leaf_prediction_rule='majority',
-                 criterion='auto'):
+                 criterion='auto', **kwargs):
         """
 
         :param max_depth:
@@ -86,7 +86,7 @@ class TreeBuilderCART(object):
         if n_samples <= self.min_samples_per_leaf:
             leaf_reached = True
         depth = tree.depth(cur_node)
-        if depth >= self.max_depth:
+        if self.max_depth is not None and depth >= self.max_depth:
             leaf_reached = True
 
         if not leaf_reached:
@@ -191,7 +191,7 @@ class TreeBuilderOblivious(object):
     def __init__(self, mode, max_depth=10, min_samples_per_leaf=4,
                  max_n_splits=1,
                  leaf_prediction_rule='majority',
-                 criterion='auto'):
+                 criterion='auto', **kwargs):
         """
 
         :param max_depth:
@@ -242,7 +242,7 @@ class TreeBuilderOblivious(object):
             need_to_split = True
             if n_samples <= self.min_samples_per_leaf:
                 need_to_split = False
-            if cur_level >= self.max_depth:
+            if self.max_depth is not None and cur_level >= self.max_depth:
                 need_to_split = False
             if need_to_split:
                 leaves_need_to_split.append(node_id)
@@ -275,7 +275,7 @@ class TreeBuilderOblivious(object):
                 else:
                     raise ValueError('Invalid value for leaf_prediction_rule: {}'.format(self.leaf_prediction_rule))
 
-        if cur_level < self.max_depth and at_least_one_split_is_made:
+        if self.max_depth is not None and cur_level < self.max_depth and at_least_one_split_is_made:
             self._build_tree_recursive(tree, cur_level + 1)
 
     def _prune_tree(self, tree, X, y):

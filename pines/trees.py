@@ -60,6 +60,9 @@ class BinaryDecisionTree(object):
         assert node_id >= 0 and node_id <= self._latest_used_node_id
         return self._is_leaf[node_id]
 
+    def leaf_mask(self):
+        return self._is_leaf[:self._latest_used_node_id + 1]
+
     def __str__(self):
         def helper(cur_node_id, padding=''):
             if cur_node_id > self._latest_used_node_id:
@@ -128,17 +131,17 @@ class BinaryDecisionTree(object):
         :return:
         """
         def predict_one(x):
-            current_leaf = self.root()
-            while not self.is_leaf(current_leaf):
-                current_split = self._splits[current_leaf]
+            current_node = self.root()
+            while not self.is_leaf(current_node):
+                current_split = self._splits[current_node]
                 if x[current_split.feature_id] < current_split.value:
-                    current_leaf = self.left_child(current_leaf)
+                    current_node = self.left_child(current_node)
                 else:
-                    current_leaf = self.right_child(current_leaf)
-            if self._leaf_functions[current_leaf] is not None:
-                func, args = self._leaf_functions[current_leaf]
+                    current_node = self.right_child(current_node)
+            if self._leaf_functions[current_node] is not None:
+                func, args = self._leaf_functions[current_node]
                 return func(args)
-            return self._leaf_values[current_leaf]
+            return self._leaf_values[current_node]
 
         sample_size, features_count = X.shape
         assert features_count == self._n_features
@@ -146,6 +149,34 @@ class BinaryDecisionTree(object):
         for i in range(sample_size):
             x = X[i]
             result[i] = predict_one(x)
+        return result
+
+    def apply(self, X):
+        """
+
+        Args:
+            X: numpy 2d array
+                Instance-features matrix
+
+        Returns: numpy int array
+            Array of leaf indices, corresponding to classified instances
+        """
+        def apply_one(x):
+            current_node = self.root()
+            while not self.is_leaf(current_node):
+                current_split = self._splits[current_node]
+                if x[current_split.feature_id] < current_split.value:
+                    current_node = self.left_child(current_node)
+                else:
+                    current_node = self.right_child(current_node)
+            return current_node
+
+        sample_size, features_count = X.shape
+        assert features_count == self._n_features
+        result = np.zeros(sample_size)
+        for i in range(sample_size):
+            x = X[i]
+            result[i] = apply_one(x)
         return result
 
     def root(self):
