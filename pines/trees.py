@@ -64,29 +64,31 @@ class BinaryDecisionTree(object):
         return self._is_leaf[:self._latest_used_node_id + 1]
 
     def __str__(self):
-        def helper(cur_node_id, padding=''):
-            if cur_node_id > self._latest_used_node_id:
-                return '{}X'.format(padding)
+        def helper(cur_node_id, padding='', is_last_leaf_on_level=True):
+            if cur_node_id > self._latest_used_node_id or not self._is_node[cur_node_id]:
+                return ''
 
-            new_padding = padding + '    '
             if self._is_leaf[cur_node_id]:
                 node_str = '{}: {} (n={})'.format(
-                        cur_node_id, self._leaf_values[cur_node_id],
-                        self._leaf_n_samples[cur_node_id])
+                            cur_node_id, self._leaf_values[cur_node_id],
+                            self._leaf_n_samples[cur_node_id])
             else:
-                node_str = '{}: (x[{}] < {})? (n={})'.format(
+                node_str = '{}: [x[{}] < {}]? (n={})'.format(
                         cur_node_id,
                         self._splits[cur_node_id].feature_id,
                         self._splits[cur_node_id].value,
                         self._leaf_n_samples[cur_node_id]
                 )
-            if self.is_leaf(cur_node_id):
-                return '{}{}'.format(padding, node_str)
+            result = padding + ("└── " if is_last_leaf_on_level else  "├── ") + node_str + '\n'
+            if is_last_leaf_on_level:
+                new_padding = padding + '    '
             else:
-                return '{}{}\n{}\n{}'.format(
-                        padding, node_str,
-                        helper(self.left_child(cur_node_id), new_padding),
-                        helper(self.right_child(cur_node_id), new_padding))
+                new_padding = padding + '|   '
+
+            result += helper(self.left_child(cur_node_id), new_padding, False)
+            result += helper(self.right_child(cur_node_id), new_padding, True)
+            return result
+
         return helper(0)
 
     def left_child(self, node_id):
