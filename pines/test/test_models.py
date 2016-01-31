@@ -21,16 +21,16 @@ class TestDecisionTreeClassifier(unittest.TestCase):
         dataset = load_iris()
         score = np.mean(cross_val_score(
                 DecisionTreeClassifier(tree_type=self.tree_type), dataset.data, dataset.target, cv=10))
-        self.assertTrue(score > 0.8)
         print('iris: tree_type: {}, score = {}'.format(self.tree_type, score))
+        self.assertTrue(score > 0.8)
 
 
     def test_breast_cancer(self):
         dataset = load_breast_cancer()
         score = np.mean(cross_val_score(
                 DecisionTreeClassifier(tree_type=self.tree_type), dataset.data, dataset.target, cv=10))
-        self.assertTrue(score > 0.8)
         print('breast_cancer: tree_type: {}, score = {}'.format(self.tree_type, score))
+        self.assertTrue(score > 0.8)
 
 
 class TestObliviousDecisionTreeClassifier(unittest.TestCase):

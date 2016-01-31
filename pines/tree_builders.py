@@ -200,22 +200,9 @@ class TreeBuilderCART(object):
 
     def _compute_split_values(self, X, y, feature_id):
         x = X[:, feature_id]
-        split_values = []
-        if self.is_regression:
-            min_x, max_x = np.min(x), np.max(x)
-            for _ in range(self.max_n_splits):
-                for i in range(self.max_n_splits):
-                    split_value = np.random.uniform(min_x, max_x)
-                    split_values.append(split_value)
-        else:
-            sorted_xy = sorted(zip(x, y))
-            for i in range(1, len(sorted_xy)):
-                if sorted_xy[i-1][1] != sorted_xy[i][1]:
-                    split_value = (sorted_xy[i - 1][0] + sorted_xy[i][0]) / 2.0
-                    split_values.append(split_value)
-            if len(split_values) > self.max_n_splits:
-                np.random.shuffle(split_values)
-                split_values = split_values[:self.max_n_splits]
+        d = max(1, int(100.0 / (self.max_n_splits + 1)))
+        split_values = [np.percentile(x, p) for p in range(d, 100, d)]
+        split_values = list(set(split_values))
         return split_values
 
     def find_best_split(self, X, y):
@@ -389,22 +376,9 @@ class TreeBuilderOblivious(object):
             assert node in self._data_per_node
             X, y = self._data_per_node[node]
             x = X[:, feature_id]
-            split_values = []
-            if self.is_regression:
-                min_x, max_x = np.min(x), np.max(x)
-                for _ in range(self.max_n_splits):
-                    for i in range(self.max_n_splits):
-                        split_value = np.random.uniform(min_x, max_x)
-                        split_values.append(split_value)
-            else:
-                sorted_xy = sorted(zip(x, y))
-                for i in range(1, len(sorted_xy)):
-                    if sorted_xy[i-1][1] != sorted_xy[i][1]:
-                        split_value = (sorted_xy[i - 1][0] + sorted_xy[i][0]) / 2.0
-                        split_values.append(split_value)
-                if len(split_values) > self.max_n_splits:
-                    np.random.shuffle(split_values)
-                    split_values = split_values[:self.max_n_splits]
+            d = max(1, int(100.0 / (self.max_n_splits + 1)))
+            split_values = [np.percentile(x, p) for p in range(d, 100, d)]
+            split_values = list(set(split_values))
             for split_value in split_values:
                 _, _, y_left, y_right = self.split_dataset(X, y, feature_id, split_value)
                 if len(y_left) == 0 or len(y_right) == 0:
