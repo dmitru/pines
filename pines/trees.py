@@ -69,15 +69,15 @@ class BinaryDecisionTree(object):
                 return ''
 
             if self._is_leaf[cur_node_id]:
-                node_str = '{}: {} (n={})'.format(
+                node_str = '{}: {:.2f} (n={})'.format(
                             cur_node_id, self._leaf_values[cur_node_id],
-                            self._leaf_n_samples[cur_node_id])
+                            int(self._leaf_n_samples[cur_node_id]))
             else:
-                node_str = '{}: [x[{}] < {}]? (n={})'.format(
+                node_str = '{}: [x[{}] < {:.2f}]? (n={})'.format(
                         cur_node_id,
                         self._splits[cur_node_id].feature_id,
                         self._splits[cur_node_id].value,
-                        self._leaf_n_samples[cur_node_id]
+                        int(self._leaf_n_samples[cur_node_id])
                 )
             result = padding + ("└── " if is_last_leaf_on_level else  "├── ") + node_str + '\n'
             if is_last_leaf_on_level:
