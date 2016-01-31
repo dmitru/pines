@@ -4,31 +4,54 @@ import numpy as np
 import scipy.stats
 import logging
 
-from pines import metrics
 from pines.metrics import list_to_discrete_rv
 from pines.trees import BinaryDecisionTree, BinaryDecisionTreeSplit
 
 from multiprocessing import Pool
 
+from pines.utils import split_dataset, compute_split_gain_helper, compute_split_gain, SplitCriterion
 
-def resolve_split_criterion(criterion):
-    if criterion == 'gini':
-        return metrics.gini_index
-    elif criterion == 'entropy':
-        return metrics.entropy
-    elif criterion == 'mse':
-        return metrics.mse
-    else:
-        raise ValueError('Unknown criterion {}'.format(criterion))
 
 class TreeSplitCART(BinaryDecisionTreeSplit):
     def __init__(self, feature_id, value, gain):
         super(TreeSplitCART, self).__init__(feature_id, value)
         self.gain = gain
 
+class ProblemType:
+    REGRESSION = 'regressor'
+    CLASSIFICATION = 'classification'
+
+class TreeType:
+    CART = 'cart'
+    OBLIVIOUS = 'oblivious'
+    OBLIVIOUS_CART = 'oblivious-cart'
+
+    @staticmethod
+    def get_tree_builder(tree_type):
+        """
+        Resolves a name of a tree building method to the `TreeBuilder*` class,
+        implementing this method.
+
+        Args:
+            tree_type (string), the name of a kind of the tree: 'cart', 'oblivious' and so on
+
+        Returns:
+            A `TreeBuilder` class, implementing the `tree_type` tree building method.
+        """
+        if tree_type == 'cart':
+            return TreeBuilderCART
+        elif tree_type == 'oblivious':
+            return TreeBuilderOblivious
+        else:
+            raise ValueError('Unknown tree_type: {}'.format(tree_type))
+
+
 class TreeBuilderCART(object):
     """
-    TreeBuilderCART implements CART algorithm for building decision trees.
+    TreeBuilderCART implements CART algorithm (currently, without pruning phase)
+    for building decision trees.
+
+    Instances of this class can be used to generate CART trees from a dataset.
 
     References:
         - T. Hastie, R. Tibshirani and J. Friedman. "Elements of Statistical
@@ -39,36 +62,75 @@ class TreeBuilderCART(object):
     logger = logging.getLogger("TreeBuilderCART")
     debug = False
 
-    def __init__(self, mode, max_depth=10, min_samples_per_leaf=5,
+    def __init__(self, problem, max_depth=10, min_samples_per_leaf=5,
                  max_n_splits=1,
                  leaf_prediction_rule='majority',
                  criterion='auto', **kwargs):
         """
+        Initializes a new tree builder and validates the parameters.
 
-        :param max_depth:
-        Maximum depth of the decision tree
+        Args:
+            problem (string):
+                Can be either 'classification' or 'regression'
 
-        :param min_samples_per_leaf:
-        Minimum number of samples in a leaf node after which
-        the further splitting stops
+            max_depth (int): default is 10
+                A stopping criteria, the maximum depth of the tree
+
+            min_samples_per_leaf (int): default is 5
+                A stopping criteria, stop building the subtree if
+                the number of samples in it is less than `min_samples_per_leaf`
+
+            max_n_splits (int): default is 1
+                Number of splitting values to consider when choosing the best split
+
+            leaf_prediction_rule (string): default is 'majority'
+                Requires `mode` == 'regressor'. Can be either 'majority' or 'distribution'
+
+                When 'majority', the prediction for an object will be the most frequent target among all samples
+                that ended up in the same leaf during training.
+
+                When 'distribution', the prediction for an object will be a random variable sampled from a discrete
+                distribution of targets for all training samples ended up in the leaf.
+
+            criterion (string):
+                A criterion used for estimating quality of a split.
+                When `mode` == 'regressor', it can only be 'mse'.
+                When `mode` == 'classifier', it can be either 'gini' or 'entropy'.
         """
-        assert mode in ['classifier', 'regressor']
-        self.is_regression = mode == 'regressor'
+        assert problem in [ProblemType.REGRESSION, ProblemType.CLASSIFICATION]
+        self.is_regression = problem == ProblemType.REGRESSION
         self.max_depth = max_depth
         self.max_n_splits = max_n_splits
         self.min_samples_per_leaf = min_samples_per_leaf
+
         if criterion == 'auto':
-            if mode == 'classifier':
-                criterion = 'gini'
+            if problem == ProblemType.CLASSIFICATION:
+                criterion = SplitCriterion.GINI
             else:
-                criterion = 'mse'
-        self.split_criterion = resolve_split_criterion(criterion)
+                criterion = SplitCriterion.MSE
+        else:
+            if problem == ProblemType.CLASSIFICATION:
+                assert criterion in [SplitCriterion.GINI, SplitCriterion.ENTROPY]
+            else:
+                assert criterion in [SplitCriterion.MSE]
+
+        self.split_criterion = SplitCriterion.resolve_split_criterion(criterion)
         self.leaf_prediction_rule = leaf_prediction_rule
         self.pool = None
 
     def build_tree(self, X, y):
         """
-        Builds a tree fitted to data set (X, y).
+
+        Args:
+            X: object-features matrix
+            y: target vector
+
+        Returns:
+            A `BinaryDecisionTree` fitted to the dataset.
+
+            The actual structure of the tree depends both on dataset and the parameters
+            passed to the `TreeBuilderCART` constructor.
+
         """
         n_samples, n_features = X.shape
         tree = BinaryDecisionTree(n_features=n_features)
@@ -94,6 +156,7 @@ class TreeBuilderCART(object):
         if self.max_depth is not None and depth >= self.max_depth:
             leaf_reached = True
 
+        best_split = None
         if not leaf_reached:
             if TreeBuilderCART.debug:
                 TreeBuilderCART.logger.debug('Split at {}, n = {}'.format(cur_node, n_samples))
@@ -171,29 +234,13 @@ class TreeBuilderCART(object):
                     best_split = split
         return best_split
 
-def compute_split_gain_helper(args):
-    split_criterion, X, y, feature_id, split_value = args
-    _, _, y_left, y_right = split_dataset(X, y, feature_id, split_value)
-    if len(y_left) == 0 or len(y_right) == 0:
-        return None
-    gain = compute_split_gain(split_criterion, y, y_left, y_right)
-    return gain
-
-def split_dataset( X, y, feature_id, value):
-    mask = X[:, feature_id] <= value
-    return X[mask], X[~mask], y[mask], y[~mask]
-
-def compute_split_gain(split_criterion, y, y_left, y_right):
-    splits = [y_left, y_right]
-    return split_criterion(y) - \
-           sum([split_criterion(split) * float(len(split))/len(y) for split in splits])
-
 
 class TreeSplitOblivious(BinaryDecisionTreeSplit):
     def __init__(self, feature_id, value, gain, node_id):
         super(TreeSplitOblivious, self).__init__(feature_id, value)
         self.gain = gain
         self.node_id = node_id
+
 
 
 class TreeBuilderOblivious(object):
@@ -204,30 +251,59 @@ class TreeBuilderOblivious(object):
     logger = logging.getLogger("TreeBuilderOblivious")
     debug = False
 
-    def __init__(self, mode, max_depth=10, min_samples_per_leaf=4,
+    def __init__(self, problem, max_depth=10, min_samples_per_leaf=4,
                  max_n_splits=1,
                  leaf_prediction_rule='majority',
                  criterion='auto', **kwargs):
         """
+        Initializes a new tree builder and validates the parameters.
 
-        :param max_depth:
-        Maximum depth of the decision tree
+        Args:
+            problem (string):
+                Can be either 'classification' or 'regression'
 
-        :param min_samples_per_leaf:
-        Minimum number of samples in a leaf node after which
-        the further splitting stops
+            max_depth (int): default is 10
+                A stopping criteria, the maximum depth of the tree
+
+            min_samples_per_leaf (int): default is 5
+                A stopping criteria, stop building the subtree if
+                the number of samples in it is less than `min_samples_per_leaf`
+
+            max_n_splits (int): default is 1
+                Number of splitting values to consider when choosing the best split
+
+            leaf_prediction_rule (string): default is 'majority'
+                Requires `mode` == 'regressor'. Can be either 'majority' or 'distribution'
+
+                When 'majority', the prediction for an object will be the most frequent target among all samples
+                that ended up in the same leaf during training.
+
+                When 'distribution', the prediction for an object will be a random variable sampled from a discrete
+                distribution of targets for all training samples ended up in the leaf.
+
+            criterion (string):
+                A criterion used for estimating quality of a split.
+                When `mode` == 'regressor', it can only be 'mse'.
+                When `mode` == 'classifier', it can be either 'gini' or 'entropy'.
         """
-        assert mode in ['classifier', 'regressor']
-        self.is_regression = mode == 'regressor'
+        assert problem in [ProblemType.REGRESSION, ProblemType.CLASSIFICATION]
+        self.is_regression = problem == ProblemType.REGRESSION
         self.max_depth = max_depth
         self.max_n_splits = max_n_splits
         self.min_samples_per_leaf = min_samples_per_leaf
+
         if criterion == 'auto':
-            if mode == 'classifier':
-                criterion = 'gini'
+            if problem == ProblemType.CLASSIFICATION:
+                criterion = SplitCriterion.GINI
             else:
-                criterion = 'mse'
-        self.split_criterion = resolve_split_criterion(criterion)
+                criterion = SplitCriterion.MSE
+        else:
+            if problem == ProblemType.CLASSIFICATION:
+                assert criterion in [SplitCriterion.GINI, SplitCriterion.ENTROPY]
+            else:
+                assert criterion in [SplitCriterion.MSE]
+
+        self.split_criterion = SplitCriterion.resolve_split_criterion(criterion)
         self.leaf_prediction_rule = leaf_prediction_rule
 
     def build_tree(self, X, y):

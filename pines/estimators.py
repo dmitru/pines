@@ -5,42 +5,37 @@ from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from sklearn.utils import check_X_y, check_array
 from sklearn.utils.validation import NotFittedError
 
-from pines.tree_builders import TreeBuilderCART, TreeBuilderOblivious
+from pines.tree_builders import TreeType, ProblemType
 
 
 class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
     def __init__(self, tree_type='cart', **kwargs):
+        """
+        Builds a decision tree for a classification problem.
+        Args:
+            tree_type (string): One of 'cart' or 'oblivious', default is 'cart'
+            **kwargs: arguments to pass to a `TreeBuilder` instance
+
+        Returns: self
+        """
         self.tree_ = None
-        # TODO: validate parameters
-        self.tree_builder_kwargs = kwargs
-        self.tree_type = tree_type
+        self._tree_builder_kwargs = kwargs
+        self._tree_builder_class = TreeType.get_tree_builder(tree_type)
 
     def fit(self, X, y, **kwargs):
-        """
-
-        :param X:
-        :param y:
-        """
         X, y = check_X_y(X, y, dtype=np.float64)
 
         data_size, n_features = X.shape
         self._n_features = n_features
 
-        if self.tree_type == 'cart':
-            self._tree_builder = TreeBuilderCART(mode='classifier', **self.tree_builder_kwargs)
-        elif self.tree_type == 'oblivious':
-            self._tree_builder = TreeBuilderOblivious(mode='classifier', **self.tree_builder_kwargs)
-        else:
-            raise ValueError('Unknown tree_type: {}'.format(self.tree_type))
+        self._tree_builder = self._tree_builder_class(
+            problem=ProblemType.CLASSIFICATION,
+            **self._tree_builder_kwargs
+        )
         self.tree_ = self._tree_builder.build_tree(X, y)
         return self
 
     def predict(self, X, check_input=True):
-        """
-
-        :param X:
-        :return:
-        """
         if check_input:
             X = self._validate_X_predict(X, check_input=True)
         return self.tree_.predict(X)
@@ -66,36 +61,32 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
 
 class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
     def __init__(self, tree_type='cart', **kwargs):
+        """
+        Builds a decision tree for a classification problem.
+        Args:
+            tree_type (string): One of 'cart' or 'oblivious', default is 'cart'
+            **kwargs: arguments to pass to a `TreeBuilder` instance
+
+        Returns: self
+        """
         self._tree = None
-        self.tree_builder_kwargs = kwargs
-        self.tree_type = tree_type
+        self._tree_builder_kwargs = kwargs
+        self._tree_builder_class = TreeType.get_tree_builder(tree_type)
 
     def fit(self, X, y, **kwargs):
-        """
-
-        :param X:
-        :param y:
-        """
         X, y = check_X_y(X, y, dtype=np.float64)
 
         data_size, n_features = X.shape
         self._n_features = n_features
 
-        if self.tree_type == 'cart':
-            self._tree_builder = TreeBuilderCART(mode='regressor', **self.tree_builder_kwargs)
-        elif self.tree_type == 'oblivious':
-            self._tree_builder = TreeBuilderOblivious(mode='regressor', **self.tree_builder_kwargs)
-        else:
-            raise ValueError('Unknown tree_type: {}'.format(self.tree_type))
+        self._tree_builder = self._tree_builder_class(
+            problem=ProblemType.REGRESSION,
+            **self._tree_builder_kwargs
+        )
         self._tree = self._tree_builder.build_tree(X, y)
         return self
 
     def predict(self, X, check_input=True):
-        """
-
-        :param X:
-        :return:
-        """
         if check_input:
             X = self._validate_X_predict(X, check_input=True)
         return self._tree.predict(X)

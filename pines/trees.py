@@ -8,7 +8,6 @@ class BinaryDecisionTreeSplit(object):
         self.feature_id = feature_id
         self.value = value
 
-
 class BinaryDecisionTree(object):
     """
     Implements a binary decision tree with array-based representation.
