@@ -38,9 +38,9 @@ class TreeType:
         Returns:
             A `TreeBuilder` class, implementing the `tree_type` tree building method.
         """
-        if tree_type == 'cart':
+        if tree_type == TreeType.CART:
             return TreeBuilderCART
-        elif tree_type == 'oblivious':
+        elif tree_type == TreeType.OBLIVIOUS:
             return TreeBuilderOblivious
         else:
             raise ValueError('Unknown tree_type: {}'.format(tree_type))
@@ -65,7 +65,7 @@ class TreeBuilderCART(object):
     def __init__(self, problem, max_depth=10, min_samples_per_leaf=5,
                  max_n_splits=1,
                  leaf_prediction_rule='majority',
-                 criterion='auto', **kwargs):
+                 criterion='auto', n_jobs=1, **kwargs):
         """
         Initializes a new tree builder and validates the parameters.
 
@@ -96,6 +96,9 @@ class TreeBuilderCART(object):
                 A criterion used for estimating quality of a split.
                 When `mode` == 'regressor', it can only be 'mse'.
                 When `mode` == 'classifier', it can be either 'gini' or 'entropy'.
+
+            n_jobs (int): the size of process pool to use when building the tree.
+                When None, use the number of cores in the system
         """
         assert problem in [ProblemType.REGRESSION, ProblemType.CLASSIFICATION]
         self.is_regression = problem == ProblemType.REGRESSION
@@ -116,6 +119,7 @@ class TreeBuilderCART(object):
 
         self.split_criterion = SplitCriterion.resolve_split_criterion(criterion)
         self.leaf_prediction_rule = leaf_prediction_rule
+        self.n_jobs = n_jobs
         self.pool = None
 
     def build_tree(self, X, y):
@@ -134,7 +138,8 @@ class TreeBuilderCART(object):
         """
         n_samples, n_features = X.shape
         tree = BinaryDecisionTree(n_features=n_features)
-        self.pool = Pool(1)
+        if self.n_jobs > 1:
+            self.pool = Pool(self.n_jobs)
 
         leaf_to_split = tree.root()
         self._build_tree_recursive(tree, leaf_to_split, X, y)
@@ -219,7 +224,10 @@ class TreeBuilderCART(object):
         for feature_id in range(n_features):
             for split_value in self._compute_split_values(X, y, feature_id):
                 args.append([self.split_criterion, X, y, feature_id, split_value])
-        split_gains = self.pool.map(compute_split_gain_helper, args)
+        if self.pool is not None:
+            split_gains = self.pool.map(compute_split_gain_helper, args)
+        else:
+            split_gains = map(compute_split_gain_helper, args)
 
         splits = []
         for arg, gain in zip(args, split_gains):

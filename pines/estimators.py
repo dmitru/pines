@@ -9,7 +9,7 @@ from pines.tree_builders import TreeType, ProblemType
 
 
 class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
-    def __init__(self, tree_type='cart', **kwargs):
+    def __init__(self, tree_type=TreeType.CART, **kwargs):
         """
         Builds a decision tree for a classification problem.
         Args:
@@ -18,7 +18,9 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
 
         Returns: self
         """
+        super(DecisionTreeClassifier, self).__init__()
         self.tree_ = None
+        self.tree_type = tree_type
         self._tree_builder_kwargs = kwargs
         self._tree_builder_class = TreeType.get_tree_builder(tree_type)
 
@@ -60,7 +62,7 @@ class DecisionTreeClassifier(BaseEstimator, ClassifierMixin):
 
 
 class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
-    def __init__(self, tree_type='cart', **kwargs):
+    def __init__(self, tree_type=TreeType.CART, **kwargs):
         """
         Builds a decision tree for a classification problem.
         Args:
@@ -69,7 +71,9 @@ class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
 
         Returns: self
         """
+        super(DecisionTreeRegressor, self).__init__()
         self._tree = None
+        self.tree_type = tree_type
         self._tree_builder_kwargs = kwargs
         self._tree_builder_class = TreeType.get_tree_builder(tree_type)
 

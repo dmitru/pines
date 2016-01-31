@@ -4,9 +4,10 @@ from sklearn.datasets import load_boston
 from sklearn.metrics import mean_squared_error
 
 from pines.estimators import DecisionTreeRegressor
+from pines.tree_builders import TreeType
 
 if __name__ == '__main__':
-    model = DecisionTreeRegressor(max_n_splits=10, max_depth=4, tree_type='oblivious')
+    model = DecisionTreeRegressor(max_n_splits=10, max_depth=4, tree_type=TreeType.OBLIVIOUS)
     dataset = load_boston()
 
     mse = []
