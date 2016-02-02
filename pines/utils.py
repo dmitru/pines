@@ -2,13 +2,14 @@
 
 from pines import metrics
 
-def compute_split_gain_helper(args):
+def compute_split_info(args):
     split_criterion, X, y, feature_id, split_value = args
     _, _, y_left, y_right = split_dataset(X, y, feature_id, split_value)
-    if len(y_left) == 0 or len(y_right) == 0:
-        return None
+    n_left, n_right = len(y_left), len(y_right)
+    if n_left == 0 or n_right == 0:
+        return None, n_left, n_right
     gain = compute_split_gain(split_criterion, y, y_left, y_right)
-    return gain
+    return gain, n_left, n_right
 
 def split_dataset( X, y, feature_id, value):
     mask = X[:, feature_id] <= value

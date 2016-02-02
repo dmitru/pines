@@ -190,18 +190,26 @@ class BinaryDecisionTree(object):
         assert node_id >= 0 and node_id <= self._latest_used_node_id
         return np.floor(np.log2(node_id + 1)) + 1
 
-    def nodes_at_level(self, level):
+    def nodes_at_level(self, level, kind='all'):
         """
         Args:
             level: Depth level in the tree, starting from 1 for the root node.
+            kind: 'all', 'internal_nodes' or 'leaves'
 
         Returns:
             List of node ids at the specified level.
         """
+        assert kind in ['all', 'internal_nodes', 'leaves']
         result = []
         for node_id in range(2 ** (level - 1) - 1, min(2 ** level - 1, self._latest_used_node_id + 1)):
-            if self._is_node[node_id]:
+            if kind == 'all':
                 result.append(node_id)
+            elif kind == 'internal_nodes':
+                if self._is_node[node_id]:
+                    result.append(node_id)
+            else:
+                if self._is_leaf[node_id]:
+                    result.append(node_id)
         return result
 
     def _grow_list(self, list, required_capacity, fill_value=None):

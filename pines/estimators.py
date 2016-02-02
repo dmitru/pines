@@ -79,7 +79,6 @@ class DecisionTreeRegressor(BaseEstimator, RegressorMixin):
 
     def fit(self, X, y, **kwargs):
         X, y = check_X_y(X, y, dtype=np.float64)
-
         data_size, n_features = X.shape
         self._n_features = n_features
 
