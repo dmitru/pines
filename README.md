@@ -1,5 +1,7 @@
-# decision-trees
-A Python library that implements sklearn-compatible decision trees.
+# Pines: a Decision Trees ML library
+A Python library that implements sklearn-compatible decision trees. 
+
+Check the `examples` directory to see how to use the package for both classification and regression problems.
 
 ## List of things implemented
 - CART algorithm for building regression and classification trees
@@ -8,9 +10,9 @@ A Python library that implements sklearn-compatible decision trees.
 
 ## Rationale
 
-Wait... Why should anyone want to write a DT package from scratch? That's simple:
+Wait... Why would anyone want to implement his own DT package from scratch, while there's such thing as `slklearn`? That's some of the reasons:
 
-- To better understand DTs and how they are constructed - there's no better way to understand something than to implement it
+- To better understand DTs and how they are constructed - there's no better way to understand something than to implement it;
 - To have more freedom in trying different approaches in DTs construction (e.g. oblivious trees, etc). 
 With the trees from sklearn one would have to code it in Cython, which is nasty.
 

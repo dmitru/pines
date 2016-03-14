@@ -1,3 +1,15 @@
+"""
+This example shows how to use hybrid CART/Oblivious Decision Trees for classification problem.
+
+The type of trees constructed is governed by `tree_type` parameter of `DecisionTreeClassifier`.
+
+In this case it is `TreeType.OBLIVIOUS_CART`, which means that the algorithm will start building an Oblivious Decision
+tree as long as it can improve the quality of the model, and after that point it will switch to CART tree building
+algorithm to finish the construction.
+
+The specific switch criterion is specified by `switch_criterion` option.
+"""
+
 import logging
 import matplotlib.pyplot as plt
 
